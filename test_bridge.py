@@ -52,3 +52,90 @@ class TestMakeEdges(unittest.TestCase):
             n = nodes[k]
             self.assertEqual(len(n.edges),len(v))
 
+class TestEdgesCross(unittest.TestCase):
+    def test_crosses(self):
+        s = """\
+         o
+        o o
+         o
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertTrue(bridge.edges_cross(edges[1], edges[0]))
+    def test_contiguous1(self):
+        s = """\
+        oo
+         o
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+    def test_contiguous2(self):
+        s = """\
+         o
+        oo
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+    def test_contiguous3(self):
+        s = """\
+        oo
+        o
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+    def test_contiguous4(self):
+        s = """\
+        oo
+        o
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+    def test_disjoint1(self):
+        s = """\
+        oo
+          o
+          o
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+    def test_disjoint2(self):
+        s = """\
+          o
+          o
+        oo
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+    def test_disjoint3(self):
+        s = """\
+         oo
+        o
+        o
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+    def test_disjoint4(self):
+        s = """\
+        o
+        o
+         oo
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        self.assertFalse(bridge.edges_cross(edges[1], edges[0]))

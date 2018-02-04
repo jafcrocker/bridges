@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
 from itertools import chain
+from bisect import bisect_left, bisect_right
+from collections import namedtuple
 
 class Node(object):
     def __init__(self, x,y):
@@ -16,11 +18,18 @@ class Diamond(object):
             setattr(self, i, locals()[i])
 
 class Edge(object):
+    Range=namedtuple('Range', ['min', 'max'])
+    Range2=namedtuple('Range2', ['x','y'])
     def __init__(self, n0, n1):
         self.n0 = n0
         self.n1 = n1
     def __repr__(self):
-        return "E:"+str([self.n0,self.n1])
+        return "E:"+str([self.n0,self.n1])+str(self.range())
+    def range(self):
+        return Edge.Range2(Edge.Range(self.n0.x, self.n1.x), 
+                           Edge.Range(self.n0.y, self.n1.y))
+    def horizontal(self):
+        return self.n0.y == self.n1.y
 
 class Puzzle(object):
     def __init__(self, nodes, diamonds):
@@ -70,4 +79,26 @@ def make_edges(nodes, diamonds):
             e = make_edge(nodes[val], nodes[next_val])
             edges.append(e)
     return edges
+
+def edges_cross(e_h, e_v):
+    """Determine if a horizontal and vertical edge overlap"""
+    assert(e_h.horizontal())
+    assert(not e_v.horizontal())
+    h = e_h.range()
+    v = e_v.range()
+    return (h.x.min < v.x.min and
+            h.x.max > v.x.max and
+            v.y.min < h.y.min and
+            v.y.max > h.y.max)
+
+def find_crosses(edges):
+    horizontal = [e for e in edges if e.horizontal()]
+    vertical = sorted([e for e in edges if not e.horizontal()])
+    crosses = []
+    for h in horizontal:
+        y = h.range().y.min
+        for v in vertical[bisect_left(vertical,y), bisect_right(vertical,y)]:
+            if edges_cross(h,v):
+                crosses.append((h,v))
+    return crosses
 
