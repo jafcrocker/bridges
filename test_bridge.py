@@ -139,3 +139,20 @@ class TestEdgesCross(unittest.TestCase):
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
+def r(a,b):
+    return bridge.Edge.Range2(bridge.Edge.Range(*a),bridge.Edge.Range(*b))
+class TestFindCrosses(unittest.TestCase):
+    def test_1(self):
+        s = """\
+        o oo 
+        o  o  o
+          o o
+        """
+        node_data = bridge.load_string(dedent(s))
+        nodes = bridge.make_nodes(node_data)
+        edges = bridge.make_edges(nodes, [])
+        crosses = bridge.find_crosses(edges)
+        self.assertEquals(len(crosses), 1)
+        cross = crosses[0]
+        self.assertEquals(cross[0].range, r((0,3),(1,1)))
+        self.assertEquals(cross[1].range, r((2,2),(0,2)))

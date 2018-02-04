@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from itertools import chain
-from bisect import bisect_left, bisect_right
 from collections import namedtuple
 
 
@@ -27,7 +26,7 @@ class Edge(object):
         self.n0 = n0
         self.n1 = n1
     def __repr__(self):
-        return "E:"+str([self.n0,self.n1])+str(self.range())
+        return "E:"+str([self.n0,self.n1])
     @property
     def range(self):
         return Edge.Range2(Edge.Range(self.n0.x, self.n1.x), 
@@ -114,12 +113,6 @@ def edges_cross(e_h, e_v):
 def find_crosses(edges):
     """Find all crossing edges"""
     horizontal = [e for e in edges if e.horizontal]
-    vertical = sorted([e for e in edges if not e.horizontal])
-    crosses = []
-    for h in horizontal:
-        y = h.range.y.min
-        for v in vertical[bisect_left(vertical,y), bisect_right(vertical,y)]:
-            if edges_cross(h,v):
-                crosses.append((h,v))
-    return crosses
+    vertical = [e for e in edges if not e.horizontal]
+    return [(h,v) for h in horizontal for v in vertical if edges_cross(h,v)]
 
