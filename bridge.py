@@ -28,6 +28,15 @@ class Puzzle(object):
         self.diamonds = make_diamonds(diamonds)
         self.edges = make_edges(nodes, diamonds)
 
+def load_string(s):
+    nodes = []
+    for y, line in enumerate(s.splitlines()):
+        for x, c in enumerate(line):
+            if c == 'o':
+                nodes.append((x,y))
+    return nodes
+
+
 def make_nodes(nodes):
     return {i:Node(*i) for i in nodes}
 

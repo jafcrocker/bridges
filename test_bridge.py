@@ -1,5 +1,22 @@
 import unittest
 import bridge
+from textwrap import dedent
+
+
+class TestLoadString(unittest.TestCase):
+    def test_oneline(self):
+        s = "o o  o"
+        expected = [(0,0), (2,0), (5,0)]
+        self.assertEqual(bridge.load_string(s), expected)
+    def test_multiline(self):
+        s = dedent("""\
+            o o o
+             o o
+              o
+            """)
+        expected = [(0,0), (2,0), (4,0), (1,1), (3,1), (2,2)]
+        self.assertEqual(bridge.load_string(s), expected)
+
 
 class TestMakeEdges(unittest.TestCase):
     def test_nodes(self):
