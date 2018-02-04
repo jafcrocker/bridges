@@ -2,7 +2,7 @@
 
 from itertools import chain
 from collections import namedtuple
-
+from string import ascii_uppercase
 
 class Node(object):
     def __init__(self, x,y):
@@ -44,15 +44,22 @@ class Puzzle(object):
 
 
 def load_string(s):
-    """ Given a multiline string in which 'o' denotes a node,
-        return a list of (x,y) tuples, one for each node.
+    """ Given a multiline string in which 'o' denotes a node and 'A-Z'
+        indicate diamonds, return a list of (x,y) tuples, one for each 
+        node and a list of (x,y,u,l,d,r) tuples for each diamond.
     """
     nodes = []
+    diamonds = {}
     for y, line in enumerate(s.splitlines()):
+        if ':' in line:
+            diamonds.setdefault(line[0], [None]*6)[2:6] = (int(i) for i in line.split(':')[1].split(','))
+            continue
         for x, c in enumerate(line):
             if c == 'o':
                 nodes.append((x,y))
-    return nodes
+            elif c in ascii_uppercase:
+                diamonds.setdefault(c, [None]*6)[0:2] = (x,y)
+    return nodes, sorted(diamonds.values())
 
 
 def make_nodes(nodes):

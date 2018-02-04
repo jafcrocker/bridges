@@ -7,7 +7,7 @@ class TestLoadString(unittest.TestCase):
     def test_oneline(self):
         s = "o o  o"
         expected = [(0,0), (2,0), (5,0)]
-        self.assertEqual(bridge.load_string(s), expected)
+        self.assertEqual(bridge.load_string(s)[0], expected)
     def test_multiline(self):
         s = dedent("""\
             o o o
@@ -15,7 +15,23 @@ class TestLoadString(unittest.TestCase):
               o
             """)
         expected = [(0,0), (2,0), (4,0), (1,1), (3,1), (2,2)]
-        self.assertEqual(bridge.load_string(s), expected)
+        self.assertEqual(bridge.load_string(s)[0], expected)
+    def test_diamond(self):
+        s = dedent("""\
+                 A o
+                A:1,2,3,4
+                """)
+        expected = [[1,0,1,2,3,4]]
+        self.assertEqual(bridge.load_string(s)[1], expected)
+    def test_diamonds(self):
+        s = dedent("""\
+                 A o
+                o  B
+                A:11,12,13,14
+                B:9,8,7,6
+                """)
+        expected = [[1,0,11,12,13,14], [3,1,9,8,7,6]]
+        self.assertEqual(bridge.load_string(s)[1], expected)
 
 
 class TestMakeEdges(unittest.TestCase):
@@ -59,7 +75,7 @@ class TestEdgesCross(unittest.TestCase):
         o o
          o
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data,_ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertTrue(bridge.edges_cross(edges[1], edges[0]))
@@ -68,7 +84,7 @@ class TestEdgesCross(unittest.TestCase):
         oo
          o
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -77,7 +93,7 @@ class TestEdgesCross(unittest.TestCase):
          o
         oo
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -86,7 +102,7 @@ class TestEdgesCross(unittest.TestCase):
         oo
         o
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -95,7 +111,7 @@ class TestEdgesCross(unittest.TestCase):
         oo
         o
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -105,7 +121,7 @@ class TestEdgesCross(unittest.TestCase):
           o
           o
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -115,7 +131,7 @@ class TestEdgesCross(unittest.TestCase):
           o
         oo
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -125,7 +141,7 @@ class TestEdgesCross(unittest.TestCase):
         o
         o
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -135,7 +151,7 @@ class TestEdgesCross(unittest.TestCase):
         o
          oo
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         self.assertFalse(bridge.edges_cross(edges[1], edges[0]))
@@ -148,7 +164,7 @@ class TestFindCrosses(unittest.TestCase):
         o  o  o
           o o
         """
-        node_data = bridge.load_string(dedent(s))
+        node_data, _ = bridge.load_string(dedent(s))
         nodes = bridge.make_nodes(node_data)
         edges = bridge.make_edges(nodes, [])
         crosses = bridge.find_crosses(edges)
