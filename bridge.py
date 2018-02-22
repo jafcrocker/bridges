@@ -80,7 +80,7 @@ def make_edge(n1, n2):
 
 
 def make_edges(nodes, diamonds):
-    edges = []
+    edges = {}
 
     by_col = sorted(chain(nodes, diamonds))
     for idx, val in enumerate(by_col[:-1]):
@@ -89,7 +89,8 @@ def make_edges(nodes, diamonds):
             continue
         if val[0] == next_val[0]:
             e = make_edge(nodes[val], nodes[next_val])
-            edges.append(e)
+            key = (e.n0.x, e.n0.y, 'v')
+            edges[key] = e
 
     by_row = sorted(chain(nodes, diamonds), key=lambda x:(x[1], x[0]))
     for idx, val in enumerate(by_row[:-1]):
@@ -98,7 +99,8 @@ def make_edges(nodes, diamonds):
             continue
         if val[1] == next_val[1]:
             e = make_edge(nodes[val], nodes[next_val])
-            edges.append(e)
+            key = (e.n0.x, e.n0.y, 'h')
+            edges[key] = e
     return edges
 
 
@@ -119,7 +121,7 @@ def edges_cross(e_h, e_v):
 
 def find_crosses(edges):
     """Find all crossing edges"""
-    horizontal = [e for e in edges if e.horizontal]
-    vertical = [e for e in edges if not e.horizontal]
+    horizontal = [e for e in edges.itervalues() if e.horizontal]
+    vertical = [e for e in edges.itervalues() if not e.horizontal]
     return [(h,v) for h in horizontal for v in vertical if edges_cross(h,v)]
 
